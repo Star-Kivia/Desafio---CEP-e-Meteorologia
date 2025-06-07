@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CEP & Clima | Consulta Natural</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&family=Quicksand:wght@500;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --lilas-claro: #e6d7ff;
+            --lilas-medio: #c9b0f5;
+            --lilas-escuro: #9c7ae8;
+            --roxo-suave: #7c5bc5;
+            --roxo-escuro: #5a3d9e;
+            --texto-escuro: #3a2a5e;
+            --texto-claro: #f9f6ff;
+            --sombra: rgba(90, 61, 158, 0.15);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--lilas-claro), #f0e7ff);
+            color: var(--texto-escuro);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Nunito', sans-serif;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        header {
+            text-align: center;
+            padding: 25px 20px;
+            position: relative;
+            overflow: hidden;
+            border-radius: 18px;
+            background: linear-gradient(135deg, var(--roxo-suave), var(--roxo-escuro));
+            box-shadow: 0 8px 25px var(--sombra);
+            color: var(--texto-claro);
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        header h1 {
+            font-family: 'Quicksand', sans-serif;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        header p {
+            font-size: 1.15rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .header-decoration {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            opacity: 0.15;
+        }
+
+        .circle {
+            position: absolute;
+            border-radius: 50%;
+            background: var(--lilas-claro);
+        }
+
+        .circle-1 {
+            width: 120px;
+            height: 120px;
+            top: -40px;
+            left: -30px;
+        }
+
+        .circle-2 {
+            width: 80px;
+            height: 80px;
+            bottom: -20px;
+            right: 50px;
+        }
+
+        .circle-3 {
+            width: 60px;
+            height: 60px;
+            top: 30px;
+            right: 100px;
+        }
+
+        .content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+        }
+
+        .card {
+            flex: 1;
+            min-width: 300px;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px var(--sombra);
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(154, 128, 225, 0.3);
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 40px rgba(90, 61, 158, 0.25);
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, var(--lilas-escuro), var(--roxo-suave));
+            border-radius: 20px 20px 0 0;
+        }
+
+        .card-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px dashed var(--lilas-medio);
+        }
+
+        .card-title i {
+            font-size: 1.8rem;
+            color: var(--roxo-suave);
+            background: rgba(156, 122, 232, 0.15);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card-title h2 {
+            font-family: 'Quicksand', sans-serif;
+            font-size: 1.7rem;
+            font-weight: 700;
+            color: var(--roxo-escuro);
+        }
+
+        .input-group {
+            margin-bottom: 22px;
+            position: relative;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--roxo-escuro);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1rem;
+        }
+
+        label i {
+            color: var(--lilas-escuro);
+            font-size: 1.1rem;
+            width: 24px;
+            text-align: center;
+        }
+
+        input {
+            width: 100%;
+            padding: 14px 15px 14px 42px;
+            border: 2px solid #e0d5f5;
+            border-radius: 14px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            font-family: 'Nunito', sans-serif;
+            background: #fbf9ff;
+            color: var(--texto-escuro);
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--lilas-escuro);
+            box-shadow: 0 0 0 4px rgba(156, 122, 232, 0.2);
+        }
+
+        input[readonly] {
+            background-color: #f8f5ff;
+            color: var(--roxo-escuro);
+            border-color: #e9e1ff;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 15px;
+            top: 43px;
+            color: var(--lilas-escuro);
+            font-size: 1.1rem;
+        }
+
+        button {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, var(--lilas-escuro), var(--roxo-suave));
+            color: white;
+            border: none;
+            border-radius: 14px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            font-family: 'Quicksand', sans-serif;
+            letter-spacing: 0.5px;
+            box-shadow: 0 6px 15px rgba(156, 122, 232, 0.35);
+        }
+
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(156, 122, 232, 0.45);
+            background: linear-gradient(135deg, var(--roxo-suave), var(--roxo-escuro));
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .weather-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding: 20px 10px;
+        }
+
+        .weather-icon {
+            font-size: 4.5rem;
+            margin: 20px 0;
+            color: var(--roxo-suave);
+            text-shadow: 0 3px 8px rgba(122, 90, 232, 0.2);
+        }
+
+        .temperature {
+            font-size: 3.2rem;
+            font-weight: 700;
+            margin: 10px 0;
+            color: var(--roxo-escuro);
+            font-family: 'Quicksand', sans-serif;
+        }
+
+        .weather-description {
+            font-size: 1.35rem;
+            color: var(--roxo-escuro);
+            margin-bottom: 20px;
+            text-transform: capitalize;
+            font-weight: 600;
+            background: rgba(156, 122, 232, 0.1);
+            padding: 8px 20px;
+            border-radius: 50px;
+        }
+
+        .weather-details {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .detail {
+            background: #f5f1ff;
+            padding: 18px 10px;
+            border-radius: 14px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: transform 0.3s ease;
+            border: 1px solid #e8dfff;
+        }
+
+        .detail:hover {
+            transform: translateY(-5px);
+            background: #efe9ff;
+        }
+
+        .detail i {
+            font-size: 1.8rem;
+            color: var(--lilas-escuro);
+            margin-bottom: 10px;
+        }
+
+        .detail span {
+            font-size: 0.9rem;
+            color: var(--roxo-suave);
+            margin-bottom: 5px;
+        }
+
+        .detail strong {
+            font-size: 1.2rem;
+            color: var(--roxo-escuro);
+            font-weight: 700;
+        }
+
+        .messages {
+            margin-top: 22px;
+        }
+
+        .message {
+            padding: 16px;
+            border-radius: 14px;
+            text-align: center;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .error-message {
+            background: #ffebf0;
+            color: #c92a42;
+            border: 1px solid #ffd1dc;
+        }
+
+        .success-message {
+            background: #edf7ff;
+            color: #2a6bc9;
+            border: 1px solid #d1e5ff;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        footer {
+            text-align: center;
+            color: var(--roxo-escuro);
+            padding: 25px 20px;
+            font-size: 0.95rem;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 18px;
+            box-shadow: 0 5px 15px rgba(90, 61, 158, 0.1);
+            border: 1px solid rgba(154, 128, 225, 0.2);
+        }
+
+        footer p {
+            margin-bottom: 8px;
+        }
+
+        .credits {
+            font-size: 0.85rem;
+            opacity: 0.8;
+        }
+
+        @media (max-width: 768px) {
+            .content {
+                flex-direction: column;
+            }
+
+            header h1 {
+                font-size: 2.1rem;
+            }
+
+            .temperature {
+                font-size: 2.7rem;
+            }
+
+            .card {
+                padding: 25px 20px;
+            }
+        }
+
+        .spinner {
+            width: 24px;
+            height: 24px;
+            border: 3px solid rgba(156, 122, 232, 0.3);
+            border-radius: 50%;
+            border-top: 3px solid var(--roxo-suave);
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .floating {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-15px);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <div class="header-decoration">
+                <div class="circle circle-1"></div>
+                <div class="circle circle-2"></div>
+                <div class="circle circle-3"></div>
+            </div>
+            <div class="header-content">
+                <h1><i class="fas fa-map-marker-alt"></i> Consulta de CEP & Clima</h1>
+                <p>Encontre endereços e veja a previsão do tempo com apenas um CEP</p>
+            </div>
+        </header>
+
+        <div class="content">
+            <div class="card">
+                <div class="card-title">
+                    <i class="fas fa-search-location"></i>
+                    <h2>Consulta de Endereço</h2>
+                </div>
+
+                <div class="input-group">
+                    <label for="cep"><i class="fas fa-mail-bulk"></i> Digite o CEP</label>
+                    <div style="position: relative;">
+                        <input type="text" id="cep" maxlength="9" placeholder="Ex: 01001-000"
+                            oninput="formatarCEP(this)">
+                        <span class="input-icon"><i class="fas fa-map-pin"></i></span>
+                    </div>
+                </div>
+
+                <button onclick="buscarEndereco()">
+                    <i class="fas fa-search"></i> Buscar Endereço
+                </button>
+
+                <div class="input-group">
+                    <label for="logradouro"><i class="fas fa-road"></i> Logradouro</label>
+                    <div style="position: relative;">
+                        <input type="text" id="logradouro" readonly>
+                        <span class="input-icon"><i class="fas fa-location-arrow"></i></span>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="bairro"><i class="fas fa-map"></i> Bairro</label>
+                    <div style="position: relative;">
+                        <input type="text" id="bairro" readonly>
+                        <span class="input-icon"><i class="fas fa-street-view"></i></span>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="cidade"><i class="fas fa-city"></i> Cidade</label>
+                    <div style="position: relative;">
+                        <input type="text" id="cidade" readonly>
+                        <span class="input-icon"><i class="fas fa-building"></i></span>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="uf"><i class="fas fa-flag"></i> UF</label>
+                    <div style="position: relative;">
+                        <input type="text" id="uf" readonly>
+                        <span class="input-icon"><i class="fas fa-map-signs"></i></span>
+                    </div>
+                </div>
+
+                <div id="mensagem-cep" class="messages"></div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">
+                    <i class="fas fa-cloud-sun"></i>
+                    <h2>Previsão do Tempo</h2>
+                </div>
+
+                <div class="weather-card">
+                    <div id="weather-default">
+                        <i class="fas fa-sun weather-icon floating"></i>
+                        <p>Digite um CEP para ver a previsão do tempo da cidade</p>
+                    </div>
+
+                    <div id="weather-info" class="hidden">
+                        <h3 id="cidade-tempo"></h3>
+                        <i id="weather-icon" class="fas fa-sun weather-icon floating"></i>
+                        <div class="temperature"><span id="temperatura"></span>°C</div>
+                        <div class="weather-description" id="condicao"></div>
+
+                        <div class="weather-details">
+                            <div class="detail">
+                                <i class="fas fa-wind"></i>
+                                <span>Vento</span>
+                                <strong id="vento"></strong>
+                            </div>
+                            <div class="detail">
+                                <i class="fas fa-tint"></i>
+                                <span>Umidade</span>
+                                <strong id="umidade"></strong>
+                            </div>
+                            <div class="detail">
+                                <i class="fas fa-compress-alt"></i>
+                                <span>Pressão</span>
+                                <strong id="pressao"></strong>
+                            </div>
+                            <div class="detail">
+                                <i class="fas fa-temperature-high"></i>
+                                <span>Sensação</span>
+                                <strong id="sensacao"></strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="mensagem-tempo" class="messages"></div>
+            </div>
+        </div>
+
+        <footer>
+            <p>Desenvolvido como exercício prático de consumo de APIs</p>
+            <p>ViaCEP e OpenWeatherMap</p>
+            <p class="credits">Kivia Maria</p>
+        </footer>
+    </div>
+
+    <script>
+
+        function formatarCEP(input) {
+            let cep = input.value.replace(/\D/g, '');
+            if (cep.length > 5) {
+                cep = cep.substring(0, 5) + '-' + cep.substring(5, 8);
+            }
+            input.value = cep;
+        }
+
+        async function buscarEndereco() {
+            const cepInput = document.getElementById('cep');
+            const cep = cepInput.value.replace(/\D/g, '');
+            const mensagemCep = document.getElementById('mensagem-cep');
+            mensagemCep.innerHTML = '';
+            mensagemCep.className = '';
+
+            if (cep.length !== 8) {
+                mensagemCep.innerHTML = '<div class="message error-message"><i class="fas fa-exclamation-circle"></i> CEP inválido. Digite 8 dígitos.</div>';
+                return;
+            }
+
+            try {
+                mensagemCep.innerHTML = '<div class="message success-message"><span class="spinner"></span> Buscando endereço...</div>';
+
+                const resposta = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+                const dados = await resposta.json();
+
+                if (dados.erro) {
+                    mensagemCep.innerHTML = '<div class="message error-message"><i class="fas fa-exclamation-circle"></i> CEP não encontrado.</div>';
+                    return;
+                }
+
+                document.getElementById('logradouro').value = dados.logradouro || '';
+                document.getElementById('bairro').value = dados.bairro || '';
+                document.getElementById('cidade').value = dados.localidade || '';
+                document.getElementById('uf').value = dados.uf || '';
+
+                mensagemCep.innerHTML = '<div class="message success-message"><i class="fas fa-check-circle"></i> Endereço encontrado com sucesso!</div>';
+
+                buscarTempo(dados.localidade, dados.uf);
+            } catch (error) {
+                mensagemCep.innerHTML = '<div class="message error-message"><i class="fas fa-times-circle"></i> Erro ao buscar o CEP.</div>';
+                console.error(error);
+            }
+        }
+
+        async function buscarTempo(cidade, uf) {
+            const mensagemTempo = document.getElementById('mensagem-tempo');
+            const weatherInfo = document.getElementById('weather-info');
+            const weatherDefault = document.getElementById('weather-default');
+
+            mensagemTempo.innerHTML = '';
+            mensagemTempo.className = '';
+
+            try {
+                mensagemTempo.innerHTML = '<div class="message success-message"><span class="spinner"></span> Buscando previsão do tempo...</div>';
+
+                const apiKey = '6fee7be6d05040fac44f61a4ba8a18ce';
+                const resposta = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${cidade},${uf},BR&appid=${apiKey}&units=metric&lang=pt_br`);
+                const dados = await resposta.json();
+
+                if (dados.cod !== 200) {
+                    throw new Error(dados.message || 'Erro ao buscar dados meteorológicos');
+                }
+
+                document.getElementById('cidade-tempo').textContent = `${cidade}, ${uf}`;
+                document.getElementById('temperatura').textContent = Math.round(dados.main.temp);
+                document.getElementById('condicao').textContent = dados.weather[0].description;
+                document.getElementById('vento').textContent = `${dados.wind.speed} km/h`;
+                document.getElementById('umidade').textContent = `${dados.main.humidity}%`;
+                document.getElementById('pressao').textContent = `${dados.main.pressure} hPa`;
+                document.getElementById('sensacao').textContent = `${Math.round(dados.main.feels_like)}°C`;
+
+                const weatherIcon = document.getElementById('weather-icon');
+                const weatherCode = dados.weather[0].icon;
+
+                const iconMap = {
+                    '01d': 'sun',
+                    '01n': 'moon',
+                    '02d': 'cloud-sun',
+                    '02n': 'cloud-moon',
+                    '03d': 'cloud',
+                    '03n': 'cloud',
+                    '04d': 'cloud',
+                    '04n': 'cloud',
+                    '09d': 'cloud-rain',
+                    '09n': 'cloud-rain',
+                    '10d': 'cloud-sun-rain',
+                    '10n': 'cloud-moon-rain',
+                    '11d': 'bolt',
+                    '11n': 'bolt',
+                    '13d': 'snowflake',
+                    '13n': 'snowflake',
+                    '50d': 'smog',
+                    '50n': 'smog'
+                };
+
+                weatherIcon.className = `fas fa-${iconMap[weatherCode] || 'cloud'} weather-icon floating`;
+
+                weatherDefault.classList.add('hidden');
+                weatherInfo.classList.remove('hidden');
+
+                mensagemTempo.innerHTML = '<div class="message success-message"><i class="fas fa-check-circle"></i> Previsão atualizada com sucesso!</div>';
+            } catch (error) {
+                mensagemTempo.innerHTML = `<div class="message error-message"><i class="fas fa-times-circle"></i> Erro ao buscar previsão: ${error.message}</div>`;
+                console.error('Erro na API do tempo:', error);
+            }
+        }
+
+        document.getElementById('cep').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                buscarEndereco();
+            }
+        });
+    </script>
+</body>
+
+</html>
